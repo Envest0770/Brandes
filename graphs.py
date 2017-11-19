@@ -173,42 +173,40 @@ class Graphs:
     def constructWeightedBlockTree(self):
         # See Algorithm 1 in Heuristics for Speeding up Betweenness Centrality Computation
         self.constructBlocks()
-        treeEdges = {}
+        treeEdgesBlockToAP = [[] for i in range(self.componentCount)]
+        treeEdgesAPToBlock = [[] for i in range(len(self.articulationPoints))]
         D_B = {}
-        for u in self.articulationPoints:
-            treeEdges[u] = []
-            for i in self.blockOfU[u]:
-                treeEdges[u].append(-i)  # Avoids overlap between articulation points and blocks
-                if -i in treeEdges:
-                    treeEdges[-i].append(u)
-                else:
-                    treeEdges[-i] = [u]
-                D_B[[-i, u]] = -1
+        for u in range(len(self.articulationPoints)):
+            for i in self.blockOfU[self.articulationPoints[u]]:
+                treeEdgesAPToBlock[u].append(i)
+                if i in treeEdgesBlockToAP:
+                    treeEdgesBlockToAP[i].append(u)
+                D_B[(i, u)] = -1
         Q = deque()
         for i in range(self.componentCount):
             if self.blockAPCount[i] == 1:
-               Q.append([-i, treeEdges[-i][0]])
+               Q.append((i, treeEdgesBlockToAP[i][0], True))
         while len(Q) > 0:
             pair = Q.pop()
-            if pair[0] < 0:  # Pair is of the form (B, v)
-                B = -pair[0]
+            if pair[2]:  # Pair is of the form (B, v)
+                B = pair[0]
                 u = pair[1]
                 size = len(self.blockContains[B]) - 1
-                for v in treeEdges[-B]:
-                    if D_B[[-B, v]] != -1:
-                        size += self.n - D_B[[-B, v]]
-                D_B[[-B, u]] = size
-                for j in treeEdges[u]:
-                    if D_B[[j, u]] == -1:
-                        Q.append([u, j])
+                for v in treeEdgesBlockToAP[B]:
+                    if D_B[(B, v)] != -1:
+                        size += self.n - D_B[(B, v)]
+                D_B[(B, u)] = size
+                for i in treeEdgesAPToBlock[u]:
+                    if D_B[(i, u)] == -1:
+                        Q.append((u, i, False))
                         break  # TODO: check if really needed
             else:
-                B = -pair[1]
+                B = pair[1]
                 u = pair[0]
                 size = 1
-                for j in treeEdges[u]:
-                    if D_B[[j, u]] != -1:
-                        size += D_B[[j, u]]
+                for i in treeEdgesAPToBlock[u]:
+                    if D_B[(i, u)] != -1:
+                        size += D_B[(i, u)]
                 D_B[[-B, u]] = self.n - 1 - size
                 for v in treeEdges[-B]:
                     if D_B[[-B, v]] == -1:

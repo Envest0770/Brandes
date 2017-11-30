@@ -1,6 +1,15 @@
 from collections import deque
 
 
+def connectTree(edges1, edges2):
+    length = len(edges1)
+    for u in range(length):
+        for i in range(len(edges1[u])):
+            edges1[u][i] += length
+    edges1 += edges2
+    return Graphs(edges1)
+
+
 class Graphs:
     def __init__(self, edges):
         n = len(edges)
@@ -18,6 +27,7 @@ class Graphs:
         self.componentCount = 0
         self.blockContains = [[]]
         self.blockAPCount = [0]
+        self.D_B = {}
 
     def brandes(self):
         n = self.n
@@ -38,7 +48,7 @@ class Graphs:
                     if d[w] < 0:
                         Q.append(w)
                         d[w] = d[v] + 1
-                    if d[w] == d[v] + 1:
+                    if d[w] == d[v] + 1:  # v is a predecessor of w on a shortest path from s to w
                         sigma[w] += sigma[v]
                         P[w].append(v)
             delta = [0] * n
@@ -175,17 +185,17 @@ class Graphs:
         self.constructBlocks()
         treeEdgesBlockToAP = [[] for i in range(self.componentCount)]
         treeEdgesAPToBlock = [[] for i in range(len(self.articulationPoints))]
-        D_B = {}
+        self.D_B = {}
         for u in range(len(self.articulationPoints)):
             for i in self.blockOfU[self.articulationPoints[u]]:
                 treeEdgesAPToBlock[u].append(i)
                 if i in treeEdgesBlockToAP:
                     treeEdgesBlockToAP[i].append(u)
-                D_B[(i, u)] = -1
+                self.D_B[(i, u)] = -1
         Q = deque()
         for i in range(self.componentCount):
             if self.blockAPCount[i] == 1:
-               Q.append((i, treeEdgesBlockToAP[i][0], True))
+                Q.append((i, treeEdgesBlockToAP[i][0], True))
         while len(Q) > 0:
             pair = Q.pop()
             if pair[2]:  # Pair is of the form (B, v)
@@ -193,11 +203,11 @@ class Graphs:
                 u = pair[1]
                 size = len(self.blockContains[B]) - 1
                 for v in treeEdgesBlockToAP[B]:
-                    if D_B[(B, v)] != -1:
-                        size += self.n - D_B[(B, v)]
-                D_B[(B, u)] = size
+                    if self.D_B[(B, v)] != -1:
+                        size += self.n - self.D_B[(B, v)]
+                self.D_B[(B, u)] = size
                 for i in treeEdgesAPToBlock[u]:
-                    if D_B[(i, u)] == -1:
+                    if self.D_B[(i, u)] == -1:
                         Q.append((u, i, False))
                         break  # TODO: check if really needed
             else:
@@ -205,11 +215,48 @@ class Graphs:
                 u = pair[0]
                 size = 1
                 for i in treeEdgesAPToBlock[u]:
-                    if D_B[(i, u)] != -1:
-                        size += D_B[(i, u)]
-                D_B[[-B, u]] = self.n - 1 - size
-                for v in treeEdges[-B]:
-                    if D_B[[-B, v]] == -1:
-                        Q.append([-B, v])
+                    if self.D_B[(i, u)] != -1:
+                        size += self.D_B[(i, u)]
+                self.D_B[(B, u)] = self.n - 1 - size
+                for v in treeEdgesBlockToAP[B]:
+                    if self.D_B[[B, v]] == -1:
+                        Q.append((B, v))
                         break
-        return Graphs(treeEdges)
+        return connectTree(treeEdgesAPToBlock, treeEdgesBlockToAP)
+
+    def computeTrafficMatrix(self, B):
+        length = len(self.blockContains[B])
+        h = []
+        for i in range(1, length):
+            h += [1] * i
+        for i in range(length):
+            for j in range(len(h[i])):
+                u = self.blockContains[B][i]
+                v = self.blockContains[B][j]
+                if isinstance(self.blockOfU[u], int):
+                    if isinstance(self.blockOfU[v], int):
+                        pass
+                    else:
+                        h[i][j] = self.n - self.D_B[(B, v)]
+                else:
+                    if isinstance(self.blockOfU[v], int):
+                        h[i][j] = self.n - self.D_B[(B, u)]
+                    else:
+                        h[i][j] = (self.n - self.D_B[(B, u)]) * (self.n - self.D_B[(B, v)])
+        return h
+
+    def BCBCC(self):
+        self.bc = self.bc = [0] * self.n
+        T = self.constructWeightedBlockTree()
+        for u in self.articulationPoints:
+            self.bc[u] = len(self.blockOfU[u]) - 1
+            for B in self.blockOfU[u]:
+                self.bc[u] += self.D_B[(B, u)] * (self.n - self.D_B[(B, u)] - 1)
+        for B in range(self.componentCount):
+            h = self.computeTrafficMatrix(B)
+            E_B = [[] for i in range(len(self.blockContains[B]))]
+            for i in range(len(self.blockContains[B])):
+                u = self.blockContains[B][i]
+                for v in self.edges:
+                    0
+        return

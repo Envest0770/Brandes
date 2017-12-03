@@ -98,13 +98,20 @@ class Graphs:
                 children += 1
         if children > 1:
             self.articulationPoints.append(u)
+            self.blockOfU[u] = []
         for i in range(1, n):
             u = dToVertex[i]
             for v in self.edges[u]:
-                if u == self.pi[v]:
-                    if highest[v] >= i:
-                        self.articulationPoints.append(u)
+                if u == self.pi[v]:  # v is a child of u
+                    if highest[v] >= i:  # This means u is an articulation point
+                        if isinstance(self.blockOfU[u], int):
+                            # This means it's the first time it's determined that u is an articulation point
+                            self.blockOfU[u] = []
+                            self.articulationPoints.append(u)
         return
+
+    def isAP(self, u):
+        return isinstance(self.blockOfU[u], list)
 
     def addComponent(self, u):
         self.componentCount += 1

@@ -13,33 +13,34 @@ class Graphs:
         self.time = 0  # counter for dfs
         self.d = [-1] * n  # d[vertex] = time discovered
         self.pi = [-1] * n  # parent in dfs tree
+        self.dfs_completed = False
 
         # Calculated in findArticulationPoints:
         self.dToVertex = [-1] * n  # d[time discovered] = vertex
         self.highest = [-1] * n  # Used for finding articulation points
         self.articulationPoints = []
-
-        # Calculated partially in findArticulationPoints and partially in constructBlocks:
-        self.blockOfU = [0] * n  # Keeps track of which biconnected component a vertex belongs to. Articulation points
-        # belong too multiple components and use lists. For example, if edges == {0: [1], 1: [0, 2], 2: [1]},
-        # Graphs(3,2,edges).block == [0, [0, 2], 2]
+        self.find_articulationpoints_completed = False
 
         # Calculated in constructBlocks:
+        self.blockOfU = [0] * n  # Keeps track of which biconnected component a vertex belongs to. Articulation points
+        # belong too multiple components and use lists. For example, if edges == [[1], [0, 2], [1]],
+        # then Graphs(edges).block == [0, [0, 1], 1]
         self.componentCount = 0
         self.blockContains = []
         self.blockAPCount = []
         self.indexInBlock = [0] * n
         self.indexAPInBlock = {}
+        self.construct_blocks_completed = False
 
         # Calculated in constructWeightedBlockTree
         self.D_B = {}
+        self.construct_weighted_block_tree_completed = False
 
     # Main functions
 
     def brandes(self):
         n = self.n
         V = [x for x in range(n)]
-        self.bc = [0] * n  # previously calculated bc values are overwritten.
         for s in V:
             S = []
             P = [[] for i in range(n)]
@@ -68,7 +69,6 @@ class Graphs:
         return
 
     def BCBCC(self):
-        self.bc = [0] * self.n
         self.constructWeightedBlockTree()
         for u in self.articulationPoints:
             # self.bc[u] = len(self.blockOfU[u]) - 1
@@ -79,9 +79,32 @@ class Graphs:
             self.brandesForBCBCC(B, h)
         return
 
+    def alternativeBrandes(self, start=0):
+        count = self.componentCount
+        AP_in_block = [[] for x in range(count)]
+        for u in self.articulationPoints:
+            for B in self.blockOfU[u]:
+                AP_in_block[B].append(u)
+        discovered = [False] * count
+        discovered[start] = True
+        processed = [False] * count
+        vertices_processed = len(self.blockContains[start])
+        S = [(start, None)]
+        while len(S) > 0:
+            pair = S.pop()
+            B = S[0]
+            u = S[1]
+            self.brandes(B, u)
+            if u is not None:
+                self.one_start_brandes(B, u, processed)
+
+
+
     # Functions needed to perform BCBCC
 
     def dfs(self, u, resetTime=False):  # see Introduction to Algorithms page 621
+        if self.dfs_completed:
+            return
         if resetTime:
             self.time = 0
         self.d[u] = self.time
@@ -90,13 +113,17 @@ class Graphs:
                 self.time += 1
                 self.dfs(v)
                 self.pi[v] = u
+        if resetTime:
+            self.dfs_completed = True
         return
 
     def findArticulationPoints(self, start=0):
+        if self.find_articulationpoints_completed:
+            return
         n = self.n
         counter = n
         self.dfs(start, True)
-        self.highest = self.d.copy()
+        self.highest = list(self.d)
         for u in range(n):
             self.dToVertex[self.d[u]] = u
         while counter > 0:
@@ -113,8 +140,6 @@ class Graphs:
                         self.highest[u] = self.highest[v]
         u = start
         children = 0
-        self.blockOfU = [0] * n
-        self.articulationPoints = []
         for v in self.edges[u]:
             if u == self.pi[v]:
                 children += 1
@@ -128,16 +153,16 @@ class Graphs:
                     if self.highest[v] >= i:  # This means u is an articulation point
                         if not self.isArticulationPoint(u):
                             # This means it's the first time it's determined that u is an articulation point
-                            self.blockOfU[u] = []
                             self.articulationPoints.append(u)
+                            self.blockOfU[u] = []
+        self.find_articulationpoints_completed = True
         return
 
     def constructBlocks(self, start=0):
+        if self.construct_blocks_completed:
+            return
         self.findArticulationPoints(start)
         n = self.n
-        self.componentCount = 0
-        self.blockContains = []
-        self.blockAPCount = []
         if not self.isArticulationPoint(start):
             self.addNewComponent(start)
         for i in range(1, n):
@@ -145,7 +170,7 @@ class Graphs:
             parent = self.pi[u]
             j = self.d[parent]
             if self.isArticulationPoint(parent):
-                if self.highest[u] != self.highest[parent] or self.highest[u] == j or j == 0:
+                if self.highest[u] >= j or j == 0:
                     self.blockOfU[parent].append(self.componentCount)
                     self.addNewComponent(u)
                 else:
@@ -166,13 +191,15 @@ class Graphs:
                     self.indexAPInBlock[(B, u)] = i
                 else:
                     self.indexInBlock[u] = i
+        self.construct_blocks_completed = True
         return
 
     def constructWeightedBlockTree(self):
         # See Algorithm 1 in Heuristics for Speeding up Betweenness Centrality Computation
+        if self.construct_weighted_block_tree_completed:
+            return
         self.constructBlocks()
         treeEdgesBlockToAP = [[] for x in range(self.componentCount)]
-        self.D_B = {}
         unknownNeighboursOfAP = {}
         unknownNeighboursOfBlock = [0] * self.componentCount
         for u in self.articulationPoints:
@@ -217,7 +244,8 @@ class Graphs:
                             if self.D_B[(B, v)] == -1:
                                 Q.append((B, v, True))
                                 break
-                                # return connectTree(treeEdgesAPToBlock, treeEdgesBlockToAP)
+        self.construct_weighted_block_tree_completed = True
+        return
 
     def computeTrafficMatrix(self, B):
         length = len(self.blockContains[B])
@@ -306,3 +334,16 @@ class Graphs:
         else:
             self.blockOfU[u] = component
         return
+
+    def is_connected(self):
+        self.dfs(0)
+        if self.n - self.time == 1:
+            return True
+        return False
+
+    def is_undirected(self):
+        for u in range(self.n):
+            for v in self.edges[u]:
+                if u not in self.edges[v]:
+                    return False
+        return True

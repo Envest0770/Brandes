@@ -42,3 +42,10 @@ G = graphs.Graphs(edges)
 G.brandes()
 for i in range(n):
     print("BC(" + str(i) + ") = " + str(G.bc[i]))
+
+"""
+G = graphs.Graphs(edges)
+G.alternativeBrandes()
+for i in range(n):
+    print("BC(" + str(i) + ") = " + str(G.bc[i]))
+"""

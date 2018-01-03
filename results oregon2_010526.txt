@@ -1,0 +1,153 @@
+"D:\Program Files\Python\python.exe" C:/Users/Steven/Documents/GitHub/Brandes/execute.py
+Number of vertices: 11461
+Number of edges: 32730
+Graph is connected? True
+Graph is undirected? True
+Dfs takes 0.0 seconds to complete
+find_articulation_points takes 0.046875 seconds to complete
+Number of articulation points: 828
+construct_blocks takes 0.03125 seconds to complete
+Number of biconnected components: 3362
+construct_weighted_block_tree takes 0.015625 seconds to complete
+Component: 0
+brandes_for_BCBCC takes 237.28125 seconds to complete
+Component: 27
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 489
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 878
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 1116
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 1381
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 1622
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 1738
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 1776
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 1808
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 1836
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 1861
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 1884
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 1975
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2039
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2057
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2082
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2112
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2147
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2235
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2317
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2416
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2572
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2584
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2597
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2609
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2621
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2633
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2645
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2656
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2667
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2678
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2689
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2699
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2710
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2722
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2733
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2745
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2757
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2769
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2781
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2793
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2804
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2816
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2827
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2838
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2846
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2857
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2868
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2882
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2894
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2906
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2918
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2930
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2942
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2954
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2966
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 2987
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 3006
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 3026
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 3045
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 3064
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 3084
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 3104
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 3125
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 3150
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 3193
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 3242
+brandes_for_BCBCC takes 0.015625 seconds to complete
+Component: 3290
+brandes_for_BCBCC takes 0.015625 seconds to complete
+BCBCC takes 238.34375 seconds to complete
+standard Brandes takes 413.765625 seconds to complete
+
+Process finished with exit code 0

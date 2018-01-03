@@ -1,13 +1,16 @@
 from collections import deque
-
+import time
 
 class Graphs:
     def __init__(self, edges):
         n = len(edges)
         self.n = n
         self.edges = edges
-        # Calculated with Brandes/BCBCC:
+        # Calculated with Brandes/BCBCC/dfs_brandes:
         self.bc = [0] * n
+
+        # Calculated in dfs_brandes
+        self.permutated_bc = [0] * n
 
         # Calculated in dfs:
         self.time = 0  # counter for dfs
@@ -75,28 +78,119 @@ class Graphs:
             for B in self.blockOfU[u]:
                 self.bc[u] += self.D_B[(B, u)] * (self.n - self.D_B[(B, u)] - 1)
         for B in range(self.componentCount):
-            h = self.computeTrafficMatrix(B)
+            # h = self.computeTrafficMatrix(B)
+            h = self.compute_h(B)
             self.brandesForBCBCC(B, h)
         return
 
+    def BCBCC_for_experiment(self):
+        self.constructWeightedBlockTree()
+        for u in self.articulationPoints:
+            for B in self.blockOfU[u]:
+                self.bc[u] += self.D_B[(B, u)] * (self.n - self.D_B[(B, u)] - 1)
+        for B in range(self.componentCount):
+            # h = self.computeTrafficMatrix(B)
+            h = self.compute_h(B)
+            t = time.process_time()
+            self.brandesForBCBCC(B, h)
+            elapsed_time = time.process_time() - t
+            if elapsed_time > 0.0001:
+                print("Component: " + str(B))
+                print("brandes_for_BCBCC takes " + str(time.process_time() - t) + " seconds to complete")
+        return
+
     def alternativeBrandes(self, start=0):
+        self.constructBlocks()
         count = self.componentCount
+        n = self.n
         AP_in_block = [[] for x in range(count)]
         for u in self.articulationPoints:
             for B in self.blockOfU[u]:
                 AP_in_block[B].append(u)
         discovered = [False] * count
         discovered[start] = True
-        processed = [False] * count
-        vertices_processed = len(self.blockContains[start])
+        discovered_vertex = [False] * n
+        vertex_to_index = [-1] * n
+        index_to_vertex = [-1] * n
+        edges = [[] for x in range(n)]
+        processed_block = [False] * count
+        depth = 0
+        vertices_processed = 0
         S = [(start, None)]
         while len(S) > 0:
             pair = S.pop()
-            B = S[0]
-            u = S[1]
-            self.brandes(B, u)
+            B = pair[0]
+            u = pair[1]
+            vertices_discovered = vertices_processed
+            for u in self.blockContains[B]:
+                vertex_to_index[u] = vertices_discovered
+                index_to_vertex[vertices_discovered] = u
+                discovered_vertex[u] = True
+                vertices_discovered += 1
+            for i in range(vertices_processed, vertices_discovered):
+                u = index_to_vertex[i]
+                if self.isArticulationPoint(u):
+                    for v in self.edges[u]:
+                        if self.isInBlock(v, B):
+                            j = vertex_to_index[v]
+                            edges[i].append(j)
+                else:
+                    for v in self.edges[u]:
+                        j = vertex_to_index[v]
+                        edges[i].append(j)
+            self.brandes_for_dfs(B, u, edges, vertices_processed)
             if u is not None:
-                self.one_start_brandes(B, u, processed)
+                S = []
+                P = [[] for x in range(n)]
+                sigma = [0] * n
+                sigma[s] = 1
+                d = [-1] * n
+                d[s] = 0
+                Q = deque([s])
+                while len(Q) > 0:
+                    i = Q.popleft()
+                    v = self.blockContains[B][i]
+                    S.append(i)
+                    for w in self.edges[v]:
+                        if self.isInBlock(w, B):
+                            j = self.findIndex(w, B)
+                            if d[j] < 0:
+                                Q.append(j)
+                                d[j] = d[i] + 1
+                            if d[j] == d[i] + 1:  # v is a predecessor of w on a shortest path from s to w
+                                sigma[j] += sigma[i]
+                                P[j].append(i)
+                delta = [0] * n
+                if ap == None:
+                    while len(S) > 0:
+                        j = S.pop()
+                        for i in P[j]:
+                            delta[i] += (sigma[i] / sigma[j]) * (1 + delta[j])
+                        if j != s:
+                            w = self.blockContains[B][j]
+                            self.bc[w] += delta[j]
+                elif u == ap:
+                    while len(S) > 0:
+                        j = S.pop()
+                        for i in P[j]:
+                            delta[i] += (sigma[i] / sigma[j]) * (1 + delta[j])
+                        if j != s:
+                            w = self.blockContains[B][j]
+                            self.bc[w] += vertices_processed * delta[j]
+                else:
+                    while len(S) > 0:
+                        j = S.pop()
+                        w = self.blockContains[B][j]
+                        if w == ap:
+                            for i in P[j]:
+                                delta[i] += (sigma[i] / sigma[j]) * (vertices_processed + delta[j])
+                            if j != s:
+                                self.bc[w] += delta[j]
+                        else:
+                            for i in P[j]:
+                                delta[i] += (sigma[i] / sigma[j]) * (1 + delta[j])
+                            if j != s:
+                                self.bc[w] += delta[j]
 
 
 
@@ -247,6 +341,7 @@ class Graphs:
         self.construct_weighted_block_tree_completed = True
         return
 
+    """
     def computeTrafficMatrix(self, B):
         length = len(self.blockContains[B])
         h = [[1] * length for x in range(length)]
@@ -265,11 +360,33 @@ class Graphs:
                 h[j][i] = h[i][j]
             h[i][i] = 0
         return h
+    """
+
+    def compute_h(self, B):
+        length = len(self.blockContains[B])
+        h = [1] * length
+        for i in range(length):
+            u = self.blockContains[B][i]
+            if self.isArticulationPoint(u):
+                h[i] = self.n - self.D_B[(B, u)]
+        return h
 
     def brandesForBCBCC(self, B, h):
         n = len(self.blockContains[B])
         V = [x for x in range(n)]
-        # previously calculated bc values are NOT overwritten.
+        edges = [[] for x in range(n)]
+        bc = [0]*n
+        for i in range(n):
+            u = self.blockContains[B][i]
+            if self.isArticulationPoint(u):
+                for v in self.edges[u]:
+                    if self.isInBlock(v, B):
+                        j = self.findIndex(v, B)
+                        edges[i].append(j)
+            else:
+                for v in self.edges[u]:
+                    j = self.findIndex(v, B)
+                    edges[i].append(j)
         for s in V:
             S = []
             P = [[] for x in range(n)]
@@ -280,25 +397,75 @@ class Graphs:
             Q = deque([s])
             while len(Q) > 0:
                 i = Q.popleft()
-                v = self.blockContains[B][i]
                 S.append(i)
-                for w in self.edges[v]:
-                    if self.isInBlock(w, B):
-                        j = self.findIndex(w, B)
-                        if d[j] < 0:
-                            Q.append(j)
-                            d[j] = d[i] + 1
-                        if d[j] == d[i] + 1:  # v is a predecessor of w on a shortest path from s to w
-                            sigma[j] += sigma[i]
-                            P[j].append(i)
+                for j in edges[i]:
+                    if d[j] < 0:
+                        Q.append(j)
+                        d[j] = d[i] + 1
+                    if d[j] == d[i] + 1:  # v is a predecessor of w on a shortest path from s to w
+                        sigma[j] += sigma[i]
+                        P[j].append(i)
             delta = [0] * n
             while len(S) > 0:
                 j = S.pop()
                 for i in P[j]:
-                    delta[i] += (sigma[i] / sigma[j]) * (h[s][j] + delta[j])
+                    delta[i] += (sigma[i] / sigma[j]) * (h[j] + delta[j])
                 if j != s:
-                    w = self.blockContains[B][j]
-                    self.bc[w] += delta[j]
+                    bc[j] += h[s] * delta[j]
+        for i in range(n):
+            u = self.blockContains[B][i]
+            self.bc[u] += bc[i]
+        return
+
+    def brandes_for_dfs(self, B, ap, edges, vertices_processed):
+        n = len(self.blockContains[B])
+        V = [x for x in range(n)]
+        for s in V:
+            S = []
+            P = [[] for x in range(n)]
+            sigma = [0] * n
+            sigma[s] = 1
+            d = [-1] * n
+            d[s] = 0
+            Q = deque([s])
+            while len(Q) > 0:
+                i = Q.popleft()
+                S.append(i)
+                for j in edges[i]:
+                    if d[j] < 0:
+                        Q.append(j)
+                        d[j] = d[i] + 1
+                    if d[j] == d[i] + 1:  # v is a predecessor of w on a shortest path from s to w
+                        sigma[j] += sigma[i]
+                        P[j].append(i)
+            delta = [0] * n
+            if ap == None:
+                while len(S) > 0:
+                    j = S.pop()
+                    for i in P[j]:
+                        delta[i] += (sigma[i] / sigma[j]) * (1 + delta[j])
+                    if j != s:
+                        self.permutated_bc[j] += delta[j]
+            elif s == ap:
+                while len(S) > 0:
+                    j = S.pop()
+                    for i in P[j]:
+                        delta[i] += (sigma[i] / sigma[j]) * (1 + delta[j])
+                    if j != s:
+                        self.permutated_bc[j] += vertices_processed * delta[j]
+            else:
+                while len(S) > 0:
+                    j = S.pop()
+                    if j == ap:
+                        for i in P[j]:
+                            delta[i] += (sigma[i] / sigma[j]) * (vertices_processed + delta[j])
+                        if j != s:
+                            self.permutated_bc[j] += delta[j]
+                    else:
+                        for i in P[j]:
+                            delta[i] += (sigma[i] / sigma[j]) * (1 + delta[j])
+                        if j != s:
+                            self.permutated_bc[j] += delta[j]
         return
 
     # Utility functions

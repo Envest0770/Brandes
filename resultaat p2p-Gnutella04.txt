@@ -1,0 +1,11 @@
+Number of vertices: 10876
+Number of edges: 39994
+Graph is connected? True
+Graph is undirected? True
+Dfs takes 0.0 seconds to complete
+find_articulation_points takes 0.046875 seconds to complete
+Number of articulation points: 1757
+construct_blocks takes 0.03125 seconds to complete
+construct_weighted_block_tree takes 0.015625 seconds to complete
+BCBCC takes 1387.984375 seconds to complete
+standard Brandes takes 439.734375 seconds to complete

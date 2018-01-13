@@ -1,4 +1,4 @@
-import graphs
+import brandes
 
 
 
@@ -13,7 +13,7 @@ edges = [[1, 4], [0, 2], [1, 3, 5], [2, 6], [0, 5], [2, 4, 6, 9], [3, 5, 7], [6]
 
 n = len(edges)
 
-G = graphs.Graphs(edges)
+G = brandes.Graphs(edges)
 
 print("Graph is connected? " + str(G.is_connected()))
 print("Graph is undirected? " + str(G.is_undirected()))
@@ -21,24 +21,24 @@ print("Graph is undirected? " + str(G.is_undirected()))
 G.findArticulationPoints()
 
 print("Articulation points:")
-for i in G.articulationPoints:
+for i in G.articulation_points:
     print(i)
 print()
 G.constructBlocks()
 print("Components:")
-for i in G.blockContains:
+for i in G.component_contains:
     print(i)
 print()
 for i in range(n):
-    print("Vertex: " + str(i) + ", in component(s): " + str(G.blockOfU[i]))
+    print("Vertex: " + str(i) + ", in component(s): " + str(G.component_of_u[i]))
 print()
 G.BCBCC()
 for i in range(n):
     print("BC(" + str(i) + ") = " + str(G.bc[i]))
 print()
-print(G.highest)
+print(G.h)
 print()
-G = graphs.Graphs(edges)
+G = brandes.Graphs(edges)
 G.brandes()
 for i in range(n):
     print("BC(" + str(i) + ") = " + str(G.bc[i]))

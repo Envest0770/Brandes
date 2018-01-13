@@ -1,23 +1,13 @@
-"D:\Program Files\Python\python.exe" C:/Users/Steven/Documents/GitHub/Brandes/execute.py
+"D:\Program Files\Python\python.exe" C:/Users/Steven/Documents/GitHub/Brandes/experiment.py
+Name of graph: p2p-Gnutella04
 Number of vertices: 10876
 Number of edges: 39994
 Graph is connected? True
 Graph is undirected? True
-Dfs takes 0.0 seconds to complete
-find_articulation_points takes 0.0625 seconds to complete
 Number of articulation points: 1757
-construct_blocks takes 0.03125 seconds to complete
 Number of biconnected components: 2498
-construct_weighted_block_tree takes 0.0 seconds to complete
-Component: 0
-brandes_for_BCBCC takes 300.609375 seconds to complete
-Component: 330
-brandes_for_BCBCC takes 0.015625 seconds to complete
-Component: 1561
-brandes_for_BCBCC takes 0.015625 seconds to complete
-Component: 2138
-brandes_for_BCBCC takes 0.015625 seconds to complete
-BCBCC takes 300.6875 seconds to complete
-standard Brandes takes 443.09375 seconds to complete
+BCBCC takes 342.703125 seconds to complete
+The component with the largest number of vertices contains 8379 vertices and 37497.0 edges
+standard Brandes takes 456.359375 seconds to complete
 
 Process finished with exit code 0

@@ -1,0 +1,13 @@
+"D:\Program Files\Python\python.exe" C:/Users/Steven/Documents/GitHub/Brandes/experiment.py
+Name of graph: facebook_combined
+Number of vertices: 4039
+Number of edges: 88234
+Graph is connected? True
+Graph is undirected? True
+Number of articulation points: 11
+Number of biconnected components: 90
+BCBCC takes 183.9375 seconds to complete
+The component with the largest number of vertices contains 3698 vertices and 85963.0 edges
+standard Brandes takes 199.1875 seconds to complete
+
+Process finished with exit code 0

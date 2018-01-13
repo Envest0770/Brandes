@@ -1,4 +1,4 @@
-import graphs
+import brandes
 import time
 
 file = open("oregon2_010526.txt")
@@ -23,7 +23,7 @@ for line in file:
             edges[v].append(u)
             edges[u].append(v)
             m += 1
-G = graphs.Graphs(edges)
+G = brandes.Graphs(edges)
 n = G.n
 print("Number of vertices: " + str(n))
 print("Number of edges: " + str(m))
@@ -46,7 +46,7 @@ G.BCBCC()
 print("BCBCC takes " + str(time.process_time() - t) + " seconds to complete")
 results_of_BCBCC = list(G.bc)
 t = time.process_time()
-G = graphs.Graphs(edges)
+G = brandes.Graphs(edges)
 G.brandes()
 print("standard Brandes takes " + str(time.process_time() - t) + " seconds to complete")
 results_of_brandes = list(G.bc)
@@ -57,5 +57,5 @@ for i in range(n):
         print("Result of BCBCC: " + str(results_of_BCBCC[i]))
         print("Result of Brandes: " + str(results_of_brandes[i]))
         print("Articulation point? " + str(G.isArticulationPoint(i)))
-print("Number of articulation points: " + str(len(G.articulationPoints)))
+print("Number of articulation points: " + str(len(G.articulation_points)))
 

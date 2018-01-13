@@ -1,4 +1,4 @@
-import graphs
+import brandes
 import time
 
 file = open("test.txt")
@@ -24,7 +24,7 @@ for line in file:
             edges[u].append(v)
             m += 1
 print(edges)
-G = graphs.Graphs(edges)
+G = brandes.Graphs(edges)
 n = G.n
 print("Number of vertices: " + str(n))
 print("Number of edges: " + str(m))
@@ -47,25 +47,25 @@ G.BCBCC()
 print("BCBCC takes " + str(time.process_time() - t) + " seconds to complete")
 results_of_BCBCC = list(G.bc)
 t = time.process_time()
-print("Number of articulation points: " + str(len(G.articulationPoints)))
+print("Number of articulation points: " + str(len(G.articulation_points)))
 G.findArticulationPoints()
 
 print("Articulation points:")
-for i in G.articulationPoints:
+for i in G.articulation_points:
     print(i)
 print()
 G.constructBlocks()
 print("Components:")
-for i in G.blockContains:
+for i in G.component_contains:
     print(i)
 print()
 for i in range(n):
-    print("Vertex: " + str(i) + ", in component(s): " + str(G.blockOfU[i]))
+    print("Vertex: " + str(i) + ", in component(s): " + str(G.component_of_u[i]))
 print()
-print(G.highest)
+print(G.h)
 print()
 
-G = graphs.Graphs(edges)
+G = brandes.Graphs(edges)
 G.brandes()
 print("standard Brandes takes " + str(time.process_time() - t) + " seconds to complete")
 results_of_brandes = list(G.bc)

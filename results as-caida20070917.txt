@@ -1,0 +1,13 @@
+"D:\Program Files\Python\python.exe" C:/Users/Steven/Documents/GitHub/Brandes/experiment.py
+Name of graph: as-caida/as-caida20070917
+Number of vertices: 8020
+Number of edges: 18203
+Graph is connected? True
+Graph is undirected? True
+Number of articulation points: 629
+Number of biconnected components: 2780
+BCBCC takes 109.21875 seconds to complete
+The component with the largest number of vertices contains 5234 vertices and 15412.0 edges
+standard Brandes takes 223.203125 seconds to complete
+
+Process finished with exit code 0

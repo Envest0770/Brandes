@@ -23,9 +23,8 @@ class Graphs:
         self.find_articulationpoints_completed = False
 
         # Calculated in constructBlocks:
-        self.component_of_u = [
-                                  0] * n  # Keeps track of which biconnected component a vertex belongs to. Articulation points
-        # belong too multiple components and use lists. For example, if edges == [[1], [0, 2], [1]],
+        self.component_of_u = [0] * n  # Keeps track of which biconnected component a vertex belongs to. Articulation
+        # points belong too multiple components and use lists. For example, if edges == [[1], [0, 2], [1]],
         # then Graphs(edges).component_of_u == [0, [0, 1], 1]
         self.component_count = 0
         self.component_contains = []

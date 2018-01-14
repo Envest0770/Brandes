@@ -1,0 +1,13 @@
+"D:\Program Files\Python\python.exe" C:/Users/Steven/Documents/GitHub/Brandes/experiment.py
+Name of graph: rattus.norvegicus_brain_3.edge
+Number of vertices: 493
+Number of edges: 25988
+Graph is connected? True
+Graph is undirected? True
+Number of articulation points: 0
+Number of biconnected components: 1
+BCBCC takes 10.578125 seconds to complete
+The component with the largest number of vertices contains 493 vertices and 25988.0 edges
+standard Brandes takes 10.09375 seconds to complete
+
+Process finished with exit code 0

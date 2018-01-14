@@ -3,7 +3,7 @@ import time
 import sys
 
 sys.setrecursionlimit(20000)
-string = "as-caida/as-caida20040105.txt"
+string = "rattus.norvegicus_brain_3.edgelist"
 file = open(string)
 vertex_to_ID = []
 ID_to_vertex = {}

@@ -1,0 +1,13 @@
+"D:\Program Files\Python\python.exe" C:/Users/Steven/Documents/GitHub/Brandes/experiment.py
+Name of graph: mouse_brain_1.edge
+Number of vertices: 213
+Number of edges: 16242
+Graph is connected? True
+Graph is undirected? True
+Number of articulation points: 0
+Number of biconnected components: 1
+BCBCC takes 2.390625 seconds to complete
+The component with the largest number of vertices contains 213 vertices and 16242.0 edges
+standard Brandes takes 2.203125 seconds to complete
+
+Process finished with exit code 0
